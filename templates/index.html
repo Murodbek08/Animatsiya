@@ -197,12 +197,6 @@
         transform: scale(0.95);
       }
 
-      @media (min-width: 768px) {
-        #controls {
-          display: none;
-        }
-      }
-
       @media (max-width: 767px) {
         #score,
         #speed {
@@ -441,13 +435,6 @@
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");
 
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      resizeCanvas();
-      window.addEventListener("resize", resizeCanvas);
-
       let gameRunning = false;
       let score = 0;
       let highScore = 0;
@@ -455,11 +442,10 @@
       let baseSpeed = 8;
       let boost = 100;
       let boosting = false;
-      let roadOffset = 0;
       let frameCount = 0;
       let difficultyLevel = 1;
 
-      const player = {
+      let player = {
         lane: 1,
         x: 0,
         y: 0,
@@ -473,6 +459,22 @@
       let roadLines = [];
       let particles = [];
       let trees = [];
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        if (window.innerWidth < 600) {
+          player.width = window.innerWidth * 0.12;
+          player.height = window.innerWidth * 0.21;
+        } else {
+          player.width = 50;
+          player.height = 90;
+        }
+      }
+
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
 
       class Particle {
         constructor(x, y, color) {
@@ -580,8 +582,15 @@
           const startX = canvas.width / 2 - laneWidth * 1.5;
           this.x = startX + this.lane * laneWidth + laneWidth / 2;
           this.y = -150;
-          this.width = 48;
-          this.height = 85;
+
+          if (canvas.width < 600) {
+            this.width = canvas.width * 0.11;
+            this.height = canvas.width * 0.19;
+          } else {
+            this.width = 48;
+            this.height = 85;
+          }
+
           this.type = Math.random() > 0.5 ? "car" : "truck";
 
           const carColors = [
@@ -822,7 +831,7 @@
         }
       }
 
-      for (let i = 0; i < canvas.height; i += 100) {
+      for (let i = 0; i < window.innerHeight; i += 100) {
         roadLines.push(new RoadLine(i));
       }
 
@@ -839,17 +848,13 @@
       updatePlayerPosition();
 
       function drawPlayer() {
-        const scale = Math.min(canvas.width / 600, 1);
-        const adjustedWidth = player.width * scale;
-        const adjustedHeight = player.height * scale;
-
         ctx.save();
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.beginPath();
         ctx.ellipse(
-          player.x + adjustedWidth / 2,
-          player.y + adjustedHeight + 10,
-          adjustedWidth * 0.8,
+          player.x + player.width / 2,
+          player.y + player.height + 10,
+          player.width * 0.8,
           12,
           0,
           0,
@@ -860,7 +865,7 @@
         const gradient = ctx.createLinearGradient(
           player.x,
           player.y,
-          player.x + adjustedWidth,
+          player.x + player.width,
           player.y
         );
         gradient.addColorStop(0, "#b30000");
@@ -870,12 +875,12 @@
         ctx.fillStyle = gradient;
         ctx.shadowColor = "rgba(255, 0, 0, 0.7)";
         ctx.shadowBlur = 20;
-        ctx.fillRect(player.x, player.y, adjustedWidth, adjustedHeight);
+        ctx.fillRect(player.x, player.y, player.width, player.height);
 
         const highlightGrad = ctx.createLinearGradient(
           player.x,
           player.y,
-          player.x + adjustedWidth,
+          player.x + player.width,
           player.y
         );
         highlightGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
@@ -883,55 +888,55 @@
         highlightGrad.addColorStop(0.7, "rgba(255, 255, 255, 0.5)");
         highlightGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
         ctx.fillStyle = highlightGrad;
-        ctx.fillRect(player.x, player.y, adjustedWidth, adjustedHeight);
+        ctx.fillRect(player.x, player.y, player.width, player.height);
 
         ctx.fillStyle = "rgba(100, 150, 255, 0.9)";
         ctx.shadowBlur = 8;
         ctx.fillRect(
           player.x + 5,
           player.y + 6,
-          adjustedWidth - 10,
-          adjustedHeight * 0.35
+          player.width - 10,
+          player.height * 0.35
         );
 
         ctx.fillStyle = "#ffff00";
         ctx.shadowColor = "#ffff00";
         ctx.shadowBlur = 20;
-        ctx.fillRect(player.x + 5, player.y + 2, adjustedWidth * 0.38, 7);
+        ctx.fillRect(player.x + 5, player.y + 2, player.width * 0.38, 7);
         ctx.fillRect(
-          player.x + adjustedWidth - adjustedWidth * 0.38 - 5,
+          player.x + player.width - player.width * 0.38 - 5,
           player.y + 2,
-          adjustedWidth * 0.38,
+          player.width * 0.38,
           7
         );
 
         ctx.fillStyle = "#1a1a1a";
         ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
         ctx.shadowBlur = 10;
-        const wheelW = adjustedWidth * 0.24;
-        const wheelH = adjustedHeight * 0.2;
+        const wheelW = player.width * 0.24;
+        const wheelH = player.height * 0.2;
 
         ctx.fillRect(
           player.x - 7,
-          player.y + adjustedHeight * 0.25,
+          player.y + player.height * 0.25,
           wheelW,
           wheelH
         );
         ctx.fillRect(
-          player.x + adjustedWidth - wheelW + 7,
-          player.y + adjustedHeight * 0.25,
+          player.x + player.width - wheelW + 7,
+          player.y + player.height * 0.25,
           wheelW,
           wheelH
         );
         ctx.fillRect(
           player.x - 7,
-          player.y + adjustedHeight * 0.68,
+          player.y + player.height * 0.68,
           wheelW,
           wheelH
         );
         ctx.fillRect(
-          player.x + adjustedWidth - wheelW + 7,
-          player.y + adjustedHeight * 0.68,
+          player.x + player.width - wheelW + 7,
+          player.y + player.height * 0.68,
           wheelW,
           wheelH
         );
@@ -941,25 +946,25 @@
         const discSize = wheelW * 0.6;
         ctx.fillRect(
           player.x - 3,
-          player.y + adjustedHeight * 0.25 + wheelH / 2 - discSize / 2,
+          player.y + player.height * 0.25 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
         ctx.fillRect(
-          player.x + adjustedWidth - discSize + 3,
-          player.y + adjustedHeight * 0.25 + wheelH / 2 - discSize / 2,
+          player.x + player.width - discSize + 3,
+          player.y + player.height * 0.25 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
         ctx.fillRect(
           player.x - 3,
-          player.y + adjustedHeight * 0.68 + wheelH / 2 - discSize / 2,
+          player.y + player.height * 0.68 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
         ctx.fillRect(
-          player.x + adjustedWidth - discSize + 3,
-          player.y + adjustedHeight * 0.68 + wheelH / 2 - discSize / 2,
+          player.x + player.width - discSize + 3,
+          player.y + player.height * 0.68 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
@@ -969,14 +974,14 @@
         ctx.shadowBlur = 12;
         ctx.fillRect(
           player.x + 5,
-          player.y + adjustedHeight - 5,
-          adjustedWidth * 0.32,
+          player.y + player.height - 5,
+          player.width * 0.32,
           4
         );
         ctx.fillRect(
-          player.x + adjustedWidth - adjustedWidth * 0.32 - 5,
-          player.y + adjustedHeight - 5,
-          adjustedWidth * 0.32,
+          player.x + player.width - player.width * 0.32 - 5,
+          player.y + player.height - 5,
+          player.width * 0.32,
           4
         );
 
@@ -986,12 +991,12 @@
 
           for (let i = 0; i < 5; i++) {
             const flameGrad = ctx.createRadialGradient(
-              player.x + adjustedWidth / 2,
-              player.y + adjustedHeight + i * 12,
+              player.x + player.width / 2,
+              player.y + player.height + i * 12,
               0,
-              player.x + adjustedWidth / 2,
-              player.y + adjustedHeight + i * 12,
-              adjustedWidth * 0.7
+              player.x + player.width / 2,
+              player.y + player.height + i * 12,
+              player.width * 0.7
             );
             flameGrad.addColorStop(0, `rgba(255, 200, 0, ${0.8 - i * 0.15})`);
             flameGrad.addColorStop(0.5, `rgba(255, 100, 0, ${0.6 - i * 0.15})`);
@@ -999,9 +1004,9 @@
             ctx.fillStyle = flameGrad;
             ctx.beginPath();
             ctx.arc(
-              player.x + adjustedWidth / 2,
-              player.y + adjustedHeight + i * 12,
-              adjustedWidth * 0.6 * (1 - i * 0.15),
+              player.x + player.width / 2,
+              player.y + player.height + i * 12,
+              player.width * 0.6 * (1 - i * 0.15),
               0,
               Math.PI * 2
             );
@@ -1157,6 +1162,7 @@
         document.getElementById("startScreen").style.display = "none";
         document.getElementById("gameOver").style.display = "none";
 
+        updatePlayerPosition();
         gameLoop();
       }
 
