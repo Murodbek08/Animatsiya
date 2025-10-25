@@ -22,6 +22,10 @@
         touch-action: none;
       }
 
+      #video {
+        display: none;
+      }
+
       #gameCanvas {
         display: block;
         width: 100vw;
@@ -202,20 +206,123 @@
       @media (max-width: 767px) {
         #score,
         #speed {
-          padding: 10px 15px;
-          font-size: 18px;
+          padding: 8px 12px;
+          font-size: 16px;
+          top: 10px;
         }
+
+        #score {
+          left: 10px;
+        }
+
+        #speed {
+          right: 10px;
+        }
+
         #speedValue {
+          font-size: 28px;
+        }
+
+        #speedLabel {
+          font-size: 12px;
+        }
+
+        #boostBar {
+          bottom: 110px;
+          width: 200px;
+          height: 20px;
+        }
+
+        .control-btn {
+          width: 75px;
+          height: 75px;
           font-size: 32px;
         }
-        .modal h1 {
-          font-size: 38px;
+
+        .boost-btn {
+          width: 85px;
+          height: 85px;
         }
+
+        .modal {
+          padding: 25px 15px;
+          border-radius: 20px;
+          max-width: 85vw;
+        }
+
+        .modal h1 {
+          font-size: 32px;
+          margin-bottom: 15px;
+        }
+
         .modal p {
+          font-size: 16px;
+          margin: 8px 0;
+        }
+
+        .modal-btn {
+          padding: 15px 35px;
+          font-size: 20px;
+          margin-top: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        #score,
+        #speed {
+          padding: 6px 10px;
+          font-size: 14px;
+        }
+
+        #speedValue {
+          font-size: 24px;
+        }
+
+        #boostBar {
+          bottom: 100px;
+          width: 180px;
+          height: 18px;
+        }
+
+        .control-btn {
+          width: 65px;
+          height: 65px;
+          font-size: 28px;
+        }
+
+        .boost-btn {
+          width: 75px;
+          height: 75px;
+        }
+
+        .modal h1 {
+          font-size: 28px;
+        }
+
+        .modal p {
+          font-size: 14px;
+        }
+
+        .modal-btn {
+          padding: 12px 30px;
           font-size: 18px;
         }
-        .modal {
-          padding: 30px 20px;
+      }
+
+      @media (max-width: 360px) {
+        #controls {
+          padding: 0 10px;
+        }
+
+        .control-btn {
+          width: 60px;
+          height: 60px;
+          font-size: 24px;
+        }
+
+        .boost-btn {
+          width: 70px;
+          height: 70px;
         }
       }
     </style>
@@ -732,13 +839,17 @@
       updatePlayerPosition();
 
       function drawPlayer() {
+        const scale = Math.min(canvas.width / 600, 1);
+        const adjustedWidth = player.width * scale;
+        const adjustedHeight = player.height * scale;
+
         ctx.save();
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.beginPath();
         ctx.ellipse(
-          player.x + player.width / 2,
-          player.y + player.height + 10,
-          player.width * 0.8,
+          player.x + adjustedWidth / 2,
+          player.y + adjustedHeight + 10,
+          adjustedWidth * 0.8,
           12,
           0,
           0,
@@ -749,7 +860,7 @@
         const gradient = ctx.createLinearGradient(
           player.x,
           player.y,
-          player.x + player.width,
+          player.x + adjustedWidth,
           player.y
         );
         gradient.addColorStop(0, "#b30000");
@@ -759,12 +870,12 @@
         ctx.fillStyle = gradient;
         ctx.shadowColor = "rgba(255, 0, 0, 0.7)";
         ctx.shadowBlur = 20;
-        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.fillRect(player.x, player.y, adjustedWidth, adjustedHeight);
 
         const highlightGrad = ctx.createLinearGradient(
           player.x,
           player.y,
-          player.x + player.width,
+          player.x + adjustedWidth,
           player.y
         );
         highlightGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
@@ -772,55 +883,55 @@
         highlightGrad.addColorStop(0.7, "rgba(255, 255, 255, 0.5)");
         highlightGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
         ctx.fillStyle = highlightGrad;
-        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.fillRect(player.x, player.y, adjustedWidth, adjustedHeight);
 
         ctx.fillStyle = "rgba(100, 150, 255, 0.9)";
         ctx.shadowBlur = 8;
         ctx.fillRect(
           player.x + 5,
           player.y + 6,
-          player.width - 10,
-          player.height * 0.35
+          adjustedWidth - 10,
+          adjustedHeight * 0.35
         );
 
         ctx.fillStyle = "#ffff00";
         ctx.shadowColor = "#ffff00";
         ctx.shadowBlur = 20;
-        ctx.fillRect(player.x + 5, player.y + 2, player.width * 0.38, 7);
+        ctx.fillRect(player.x + 5, player.y + 2, adjustedWidth * 0.38, 7);
         ctx.fillRect(
-          player.x + player.width - player.width * 0.38 - 5,
+          player.x + adjustedWidth - adjustedWidth * 0.38 - 5,
           player.y + 2,
-          player.width * 0.38,
+          adjustedWidth * 0.38,
           7
         );
 
         ctx.fillStyle = "#1a1a1a";
         ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
         ctx.shadowBlur = 10;
-        const wheelW = player.width * 0.24;
-        const wheelH = player.height * 0.2;
+        const wheelW = adjustedWidth * 0.24;
+        const wheelH = adjustedHeight * 0.2;
 
         ctx.fillRect(
           player.x - 7,
-          player.y + player.height * 0.25,
+          player.y + adjustedHeight * 0.25,
           wheelW,
           wheelH
         );
         ctx.fillRect(
-          player.x + player.width - wheelW + 7,
-          player.y + player.height * 0.25,
+          player.x + adjustedWidth - wheelW + 7,
+          player.y + adjustedHeight * 0.25,
           wheelW,
           wheelH
         );
         ctx.fillRect(
           player.x - 7,
-          player.y + player.height * 0.68,
+          player.y + adjustedHeight * 0.68,
           wheelW,
           wheelH
         );
         ctx.fillRect(
-          player.x + player.width - wheelW + 7,
-          player.y + player.height * 0.68,
+          player.x + adjustedWidth - wheelW + 7,
+          player.y + adjustedHeight * 0.68,
           wheelW,
           wheelH
         );
@@ -830,25 +941,25 @@
         const discSize = wheelW * 0.6;
         ctx.fillRect(
           player.x - 3,
-          player.y + player.height * 0.25 + wheelH / 2 - discSize / 2,
+          player.y + adjustedHeight * 0.25 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
         ctx.fillRect(
-          player.x + player.width - discSize + 3,
-          player.y + player.height * 0.25 + wheelH / 2 - discSize / 2,
+          player.x + adjustedWidth - discSize + 3,
+          player.y + adjustedHeight * 0.25 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
         ctx.fillRect(
           player.x - 3,
-          player.y + player.height * 0.68 + wheelH / 2 - discSize / 2,
+          player.y + adjustedHeight * 0.68 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
         ctx.fillRect(
-          player.x + player.width - discSize + 3,
-          player.y + player.height * 0.68 + wheelH / 2 - discSize / 2,
+          player.x + adjustedWidth - discSize + 3,
+          player.y + adjustedHeight * 0.68 + wheelH / 2 - discSize / 2,
           discSize,
           discSize
         );
@@ -858,14 +969,14 @@
         ctx.shadowBlur = 12;
         ctx.fillRect(
           player.x + 5,
-          player.y + player.height - 5,
-          player.width * 0.32,
+          player.y + adjustedHeight - 5,
+          adjustedWidth * 0.32,
           4
         );
         ctx.fillRect(
-          player.x + player.width - player.width * 0.32 - 5,
-          player.y + player.height - 5,
-          player.width * 0.32,
+          player.x + adjustedWidth - adjustedWidth * 0.32 - 5,
+          player.y + adjustedHeight - 5,
+          adjustedWidth * 0.32,
           4
         );
 
@@ -875,12 +986,12 @@
 
           for (let i = 0; i < 5; i++) {
             const flameGrad = ctx.createRadialGradient(
-              player.x + player.width / 2,
-              player.y + player.height + i * 12,
+              player.x + adjustedWidth / 2,
+              player.y + adjustedHeight + i * 12,
               0,
-              player.x + player.width / 2,
-              player.y + player.height + i * 12,
-              player.width * 0.7
+              player.x + adjustedWidth / 2,
+              player.y + adjustedHeight + i * 12,
+              adjustedWidth * 0.7
             );
             flameGrad.addColorStop(0, `rgba(255, 200, 0, ${0.8 - i * 0.15})`);
             flameGrad.addColorStop(0.5, `rgba(255, 100, 0, ${0.6 - i * 0.15})`);
@@ -888,9 +999,9 @@
             ctx.fillStyle = flameGrad;
             ctx.beginPath();
             ctx.arc(
-              player.x + player.width / 2,
-              player.y + player.height + i * 12,
-              player.width * 0.6 * (1 - i * 0.15),
+              player.x + adjustedWidth / 2,
+              player.y + adjustedHeight + i * 12,
+              adjustedWidth * 0.6 * (1 - i * 0.15),
               0,
               Math.PI * 2
             );
