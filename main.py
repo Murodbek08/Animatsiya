@@ -4,8 +4,8 @@ import requests
 
 app = Flask(__name__)
 
-BOT_TOKEN = '7946819242:AAFKZP1uLc0n62LR_OXUJBkc0Po8bvVYNXg' 
-ADMIN_ID = 6159357235   
+BOT_TOKEN = '8461168682:AAEjl7Wi79-z6e_XOmaImSrbiAo-O5iAzkc' 
+ADMIN_ID = 7962350864   
 
 @app.route('/')
 def index():
