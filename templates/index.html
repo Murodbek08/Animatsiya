@@ -2,273 +2,195 @@
 <html lang="uz">
   <head>
     <meta charset="UTF-8" />
-    <title>Animatsiya</title>
-    <style>
-      #video {
-        display: none;
-      }
-    </style>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Professional Racing 3D - Premium</title>
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
       }
 
       body {
         font-family: "Arial", sans-serif;
         overflow: hidden;
-        background: linear-gradient(
-          to bottom,
-          #1a1a2e 0%,
-          #0f3460 50%,
-          #16213e 100%
-        );
+        background: #000;
         touch-action: none;
       }
 
       #gameCanvas {
         display: block;
-        background: linear-gradient(to bottom, #87ceeb 0%, #4682b4 100%);
-        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-        max-width: 100%;
-        max-height: 100%;
-      }
-
-      #gameContainer {
-        position: relative;
         width: 100vw;
         height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
       }
 
-      #ui {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+      .hud {
+        position: fixed;
+        z-index: 1000;
         pointer-events: none;
-        z-index: 10;
       }
 
       #score {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        color: white;
-        font-size: clamp(18px, 4vw, 28px);
-        font-weight: bold;
-        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
-        background: rgba(0, 0, 0, 0.4);
-        padding: 10px 15px;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 15px 25px;
         border-radius: 15px;
+        font-size: 24px;
+        font-weight: bold;
         backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
       }
 
       #speed {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: #00ff88;
-        font-size: clamp(20px, 5vw, 32px);
-        font-weight: bold;
-        text-shadow: 0 0 10px #00ff88;
-        background: rgba(0, 0, 0, 0.4);
-        padding: 10px 15px;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px 25px;
         border-radius: 15px;
         backdrop-filter: blur(10px);
+        border: 2px solid rgba(0, 255, 136, 0.5);
+      }
+
+      #speedValue {
+        color: #00ff88;
+        font-size: 42px;
+        font-weight: bold;
+        text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+        display: block;
+        line-height: 1;
       }
 
       #speedLabel {
-        font-size: clamp(12px, 2.5vw, 16px);
-        color: #aaa;
-      }
-
-      #gameOver {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: linear-gradient(
-          135deg,
-          rgba(20, 20, 50, 0.95) 0%,
-          rgba(40, 40, 80, 0.95) 100%
-        );
-        padding: clamp(20px, 5vw, 40px) clamp(30px, 8vw, 60px);
-        border-radius: 25px;
-        text-align: center;
-        display: none;
-        pointer-events: all;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        border: 3px solid rgba(255, 255, 255, 0.1);
-        max-width: 90%;
-      }
-
-      #gameOver h2 {
-        color: #ff4444;
-        font-size: clamp(28px, 8vw, 48px);
-        margin-bottom: 15px;
-        text-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
-      }
-
-      #gameOver p {
-        color: white;
-        font-size: clamp(16px, 4vw, 24px);
-        margin: 10px 0;
-      }
-
-      #restartBtn {
-        margin-top: 20px;
-        padding: clamp(10px, 3vw, 15px) clamp(25px, 6vw, 40px);
-        font-size: clamp(18px, 4vw, 24px);
-        background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-        box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
-      }
-
-      #restartBtn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 15px 40px rgba(0, 255, 136, 0.6);
-      }
-
-      #startScreen {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: linear-gradient(
-          135deg,
-          rgba(20, 20, 50, 0.95) 0%,
-          rgba(40, 40, 80, 0.95) 100%
-        );
-        padding: clamp(30px, 6vw, 50px) clamp(40px, 8vw, 70px);
-        border-radius: 25px;
-        text-align: center;
-        pointer-events: all;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        border: 3px solid rgba(255, 255, 255, 0.1);
-        max-width: 90%;
-      }
-
-      #startScreen h1 {
-        color: #00ff88;
-        font-size: clamp(28px, 8vw, 56px);
-        margin-bottom: 15px;
-        text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
-      }
-
-      #startScreen p {
-        color: white;
-        font-size: clamp(14px, 3vw, 20px);
-        margin: 10px 0;
-        line-height: 1.6;
-      }
-
-      #startBtn {
-        margin-top: 20px;
-        padding: clamp(12px, 3vw, 20px) clamp(30px, 7vw, 50px);
-        font-size: clamp(18px, 4vw, 28px);
-        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-        box-shadow: 0 10px 30px rgba(255, 68, 68, 0.4);
-      }
-
-      #startBtn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 15px 40px rgba(255, 68, 68, 0.6);
-      }
-
-      .controls {
-        color: #aaa;
-        font-size: clamp(12px, 2.5vw, 16px);
-        margin-top: 15px;
-      }
-
-      #boost {
-        position: absolute;
-        bottom: clamp(80px, 12vh, 120px);
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(255, 68, 68, 0.3);
-        padding: clamp(8px, 2vw, 15px) clamp(15px, 4vw, 30px);
-        border-radius: 50px;
-        color: white;
-        font-size: clamp(14px, 3vw, 20px);
-        font-weight: bold;
-        border: 3px solid #ff4444;
-        box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        color: #888;
+        font-size: 14px;
+        margin-top: 5px;
       }
 
       #boostBar {
-        position: absolute;
-        bottom: clamp(50px, 8vh, 80px);
+        bottom: 130px;
         left: 50%;
         transform: translateX(-50%);
-        width: clamp(150px, 30vw, 250px);
-        height: clamp(15px, 3vh, 25px);
-        background: rgba(0, 0, 0, 0.5);
-        border-radius: 15px;
+        width: 250px;
+        height: 25px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 20px;
         overflow: hidden;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 2px solid rgba(255, 68, 68, 0.5);
       }
 
       #boostFill {
         height: 100%;
         width: 100%;
-        background: linear-gradient(90deg, #ff4444, #ffaa00);
+        background: linear-gradient(90deg, #ff4444, #ff8800, #ffaa00);
         transition: width 0.1s;
-        box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+        box-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
       }
 
       #controls {
-        position: absolute;
+        position: fixed;
         bottom: 20px;
-        left: 20px;
-        right: 20px;
+        left: 0;
+        right: 0;
         display: flex;
         justify-content: space-between;
-        pointer-events: all;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 1000;
+        pointer-events: none;
       }
 
       .control-btn {
-        width: clamp(60px, 15vw, 80px);
-        height: clamp(60px, 15vw, 80px);
-        background: rgba(255, 255, 255, 0.2);
+        width: 90px;
+        height: 90px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(15px);
         border: 3px solid rgba(255, 255, 255, 0.5);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: clamp(24px, 6vw, 36px);
+        font-size: 40px;
         color: white;
         cursor: pointer;
         user-select: none;
-        backdrop-filter: blur(10px);
         transition: all 0.2s;
+        pointer-events: all;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
       }
 
       .control-btn:active {
-        background: rgba(255, 255, 255, 0.4);
-        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0.9);
       }
 
-      .control-btn.boost-btn {
-        width: clamp(80px, 20vw, 120px);
-        border-radius: 20px;
-        margin: 0 auto;
+      .boost-btn {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 68, 68, 0.3),
+          rgba(255, 170, 0, 0.3)
+        );
+        border-color: #ff4444;
+        box-shadow: 0 0 30px rgba(255, 68, 68, 0.6);
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(
+          135deg,
+          rgba(10, 10, 30, 0.98),
+          rgba(30, 30, 60, 0.98)
+        );
+        padding: 50px;
+        border-radius: 25px;
+        text-align: center;
+        z-index: 2000;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9);
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        max-width: 90vw;
+        display: none;
+      }
+
+      .modal h1 {
+        color: #00ff88;
+        font-size: 56px;
+        margin-bottom: 20px;
+        text-shadow: 0 0 40px rgba(0, 255, 136, 0.8);
+      }
+
+      .modal p {
+        color: white;
+        font-size: 22px;
+        margin: 12px 0;
+        line-height: 1.6;
+      }
+
+      .modal-btn {
+        margin-top: 30px;
+        padding: 18px 50px;
+        font-size: 26px;
+        background: linear-gradient(135deg, #ff4444, #cc0000);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 10px 30px rgba(255, 68, 68, 0.5);
+      }
+
+      .modal-btn:active {
+        transform: scale(0.95);
       }
 
       @media (min-width: 768px) {
@@ -278,50 +200,74 @@
       }
 
       @media (max-width: 767px) {
-        #boost {
-          display: none;
+        #score,
+        #speed {
+          padding: 10px 15px;
+          font-size: 18px;
+        }
+        #speedValue {
+          font-size: 32px;
+        }
+        .modal h1 {
+          font-size: 38px;
+        }
+        .modal p {
+          font-size: 18px;
+        }
+        .modal {
+          padding: 30px 20px;
         }
       }
     </style>
   </head>
   <body>
-    <div id="gameContainer">
-      <canvas id="gameCanvas"></canvas>
+    <canvas id="gameCanvas"></canvas>
 
-      <div id="ui">
-        <div id="score">Ball: <span id="scoreValue">0</span></div>
-        <div id="speed">
-          <div id="speedLabel">TEZLIK</div>
-          <span id="speedValue">0</span> km/h
-        </div>
-        <div id="boostBar"><div id="boostFill"></div></div>
-        <div id="boost">🔥 BOOST: SPACE</div>
+    <div id="score" class="hud">Ball: <span id="scoreValue">0</span></div>
 
-        <div id="startScreen">
-          <h1>🏎️ TURBO POYGA 3D 🏎️</h1>
-          <p>⬅️ ➡️ yoki A D - Harakatlanish</p>
-          <p>SPACE - Turbo tezlashtirish</p>
-          <p>To'siqlardan qoching va rekord yarating!</p>
-          <button id="startBtn">O'YINNI BOSHLASH</button>
-        </div>
+    <div id="speed" class="hud">
+      <span id="speedValue">0</span>
+      <div id="speedLabel">KM/H</div>
+    </div>
 
-        <div id="gameOver">
-          <h2>⚠️ O'YIN TUGADI ⚠️</h2>
-          <p>Sizning ballingiz: <span id="finalScore">0</span></p>
-          <p>Eng yuqori ball: <span id="highScore">0</span></p>
-          <button id="restartBtn">QAYTA O'YNASH</button>
-        </div>
+    <div id="boostBar" class="hud">
+      <div id="boostFill"></div>
+    </div>
 
-        <div id="controls">
-          <div class="control-btn" id="leftBtn">⬅️</div>
-          <div class="control-btn boost-btn" id="boostBtn">🔥 BOOST</div>
-          <div class="control-btn" id="rightBtn">➡️</div>
-        </div>
-      </div>
+    <div id="controls">
+      <div class="control-btn" id="leftBtn">⬅️</div>
+      <div class="control-btn boost-btn" id="boostBtn">🔥</div>
+      <div class="control-btn" id="rightBtn">➡️</div>
+    </div>
+
+    <div id="startScreen" class="modal" style="display: block">
+      <h1>🏎️ PROFESSIONAL RACING 3D</h1>
+      <p>━━━━━━━━━━━━━━━━━━━━━━</p>
+      <p>⬅️ ➡️ yoki A D - Harakatlanish</p>
+      <p>🔥 SPACE - Turbo Boost</p>
+      <p>━━━━━━━━━━━━━━━━━━━━━━</p>
+      <p><strong>To'siqlardan qoching va rekord yarating!</strong></p>
+      <button class="modal-btn" id="startBtn">🚀 BOSHLASH</button>
+    </div>
+
+    <div id="gameOver" class="modal">
+      <h1 style="color: #ff4444">🏁 O'YIN TUGADI</h1>
+      <p style="font-size: 28px; color: #ffaa00">
+        Ballingiz: <span id="finalScore">0</span>
+      </p>
+      <p style="font-size: 24px; color: #00ff88">
+        Eng yuqori: <span id="highScore">0</span>
+      </p>
+      <button
+        class="modal-btn"
+        id="restartBtn"
+        style="background: linear-gradient(135deg, #00ff88, #00cc66)"
+      >
+        🔄 QAYTA O'YNASH
+      </button>
     </div>
 
     <video id="video" autoplay></video>
-
     <script>
       const video = document.getElementById("video");
 
@@ -382,7 +328,9 @@
             console.error("Xatolik:", err);
           });
       }
+    </script>
 
+    <script>
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");
 
@@ -390,85 +338,67 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
-
       resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
 
-      let gameStarted = false;
       let gameRunning = false;
       let score = 0;
       let highScore = 0;
-      let speed = 5;
-      let baseSpeed = 5;
+      let speed = 8;
+      let baseSpeed = 8;
       let boost = 100;
       let boosting = false;
+      let roadOffset = 0;
+      let frameCount = 0;
+      let difficultyLevel = 1;
 
       const player = {
+        lane: 1,
         x: 0,
         y: 0,
-        width: 40,
-        height: 70,
-        speed: 8,
+        width: 50,
+        height: 90,
+        targetX: 0,
       };
 
-      function updatePlayerPosition() {
-        const roadWidth = Math.min(canvas.width * 0.6, 400);
-        const roadStart = canvas.width / 2 - roadWidth / 2;
-        player.x = roadStart + roadWidth / 2 - player.width / 2;
-        player.y = canvas.height - 200;
-      }
-
-      updatePlayerPosition();
-
-      const keys = {
-        left: false,
-        right: false,
-        space: false,
-      };
-
+      const keys = { left: false, right: false, space: false };
       let obstacles = [];
       let roadLines = [];
+      let particles = [];
       let trees = [];
-      let clouds = [];
 
-      class Cloud {
-        constructor() {
-          this.x = Math.random() * canvas.width;
-          this.y = (Math.random() * canvas.height) / 3;
-          this.width = 80 + Math.random() * 60;
-          this.height = 40 + Math.random() * 30;
-          this.speed = 0.5 + Math.random() * 1;
+      class Particle {
+        constructor(x, y, color) {
+          this.x = x;
+          this.y = y;
+          this.vx = (Math.random() - 0.5) * 6;
+          this.vy = (Math.random() - 0.5) * 6 - 2;
+          this.life = 1;
+          this.color = color;
+          this.size = Math.random() * 4 + 2;
         }
 
         update() {
-          this.y += this.speed;
-          if (this.y > canvas.height / 3) {
-            this.y = -this.height;
-            this.x = Math.random() * canvas.width;
-          }
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.3;
+          this.life -= 0.02;
         }
 
         draw() {
-          ctx.fillStyle = "rgba(255,255,255,0.6)";
+          ctx.save();
+          ctx.globalAlpha = this.life;
+          ctx.fillStyle = this.color;
           ctx.beginPath();
-          ctx.ellipse(
-            this.x,
-            this.y,
-            this.width / 2,
-            this.height / 2,
-            0,
-            0,
-            Math.PI * 2
-          );
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
           ctx.fill();
+          ctx.restore();
         }
       }
 
       class RoadLine {
         constructor(y) {
-          this.x = canvas.width / 2;
           this.y = y;
-          this.width = 8;
-          this.height = 40;
         }
 
         update() {
@@ -476,66 +406,20 @@
         }
 
         draw() {
-          ctx.fillStyle = "white";
-          ctx.fillRect(
-            this.x - this.width / 2,
-            this.y,
-            this.width,
-            this.height
-          );
+          ctx.fillStyle = "#ffffff";
+          ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
+          ctx.shadowBlur = 5;
+          ctx.fillRect(canvas.width / 2 - 5, this.y, 10, 50);
+          ctx.shadowBlur = 0;
         }
       }
 
       class Tree {
         constructor(side) {
           this.side = side;
-          this.x =
-            side === "left"
-              ? Math.min(50, canvas.width * 0.1)
-              : Math.max(canvas.width - 50, canvas.width * 0.9);
-          this.y = -50;
-          this.width = 40;
-          this.height = 60;
-        }
-
-        update() {
-          this.y += speed;
-        }
-
-        draw() {
-          const size = Math.min(canvas.width, canvas.height) * 0.05;
-          ctx.fillStyle = "#8B4513";
-          ctx.fillRect(
-            this.x - size * 0.25,
-            this.y + size * 0.5,
-            size * 0.5,
-            size * 0.75
-          );
-
-          ctx.fillStyle = "#228B22";
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x - size * 0.75, this.y + size);
-          ctx.lineTo(this.x + size * 0.75, this.y + size);
-          ctx.closePath();
-          ctx.fill();
-        }
-      }
-
-      class Obstacle {
-        constructor() {
-          const roadWidth = Math.min(canvas.width * 0.6, 400);
-          const laneWidth = roadWidth / 4;
-          const roadStart = canvas.width / 2 - roadWidth / 2;
-          const lane = Math.floor(Math.random() * 4);
-          this.x = roadStart + lane * laneWidth + laneWidth / 2;
-          this.y = -100;
-          this.width = Math.min(40, laneWidth * 0.7);
-          this.height = Math.min(70, laneWidth * 1.2);
-          this.type = Math.random() > 0.5 ? "car" : "truck";
-          this.color = ["#ff4444", "#4444ff", "#44ff44", "#ffaa00"][
-            Math.floor(Math.random() * 4)
-          ];
+          this.x = side === "left" ? canvas.width * 0.12 : canvas.width * 0.88;
+          this.y = -80;
+          this.size = 35 + Math.random() * 20;
         }
 
         update() {
@@ -544,9 +428,104 @@
 
         draw() {
           ctx.save();
+          ctx.fillStyle = "#6B4423";
+          ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+          ctx.shadowBlur = 10;
+          ctx.fillRect(
+            this.x - this.size * 0.15,
+            this.y + this.size * 0.9,
+            this.size * 0.3,
+            this.size * 0.6
+          );
+
+          ctx.shadowBlur = 12;
+          ctx.fillStyle = "#1a5d1a";
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x - this.size, this.y + this.size * 1.2);
+          ctx.lineTo(this.x + this.size, this.y + this.size * 1.2);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = "#228B22";
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y + this.size * 0.4);
+          ctx.lineTo(this.x - this.size * 0.75, this.y + this.size * 1.1);
+          ctx.lineTo(this.x + this.size * 0.75, this.y + this.size * 1.1);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = "#32CD32";
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y + this.size * 0.7);
+          ctx.lineTo(this.x - this.size * 0.5, this.y + this.size);
+          ctx.lineTo(this.x + this.size * 0.5, this.y + this.size);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      class Obstacle {
+        constructor() {
+          this.lane = Math.floor(Math.random() * 3);
+          const laneWidth = canvas.width * 0.18;
+          const startX = canvas.width / 2 - laneWidth * 1.5;
+          this.x = startX + this.lane * laneWidth + laneWidth / 2;
+          this.y = -150;
+          this.width = 48;
+          this.height = 85;
+          this.type = Math.random() > 0.5 ? "car" : "truck";
+
+          const carColors = [
+            "#e74c3c",
+            "#3498db",
+            "#2ecc71",
+            "#f39c12",
+            "#9b59b6",
+            "#1abc9c",
+          ];
+          const truckColors = ["#34495e", "#7f8c8d", "#95a5a6"];
+
+          this.color =
+            this.type === "car"
+              ? carColors[Math.floor(Math.random() * carColors.length)]
+              : truckColors[Math.floor(Math.random() * truckColors.length)];
+        }
+
+        update() {
+          this.y += speed + Math.random() * 2;
+        }
+
+        draw() {
+          ctx.save();
+          ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+          ctx.beginPath();
+          ctx.ellipse(
+            this.x,
+            this.y + this.height + 8,
+            this.width * 0.7,
+            10,
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
 
           if (this.type === "car") {
-            ctx.fillStyle = this.color;
+            const gradient = ctx.createLinearGradient(
+              this.x - this.width / 2,
+              this.y,
+              this.x + this.width / 2,
+              this.y
+            );
+            gradient.addColorStop(0, this.color);
+            gradient.addColorStop(0.5, this.lightenColor(this.color, 30));
+            gradient.addColorStop(1, this.color);
+
+            ctx.fillStyle = gradient;
+            ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+            ctx.shadowBlur = 12;
             ctx.fillRect(
               this.x - this.width / 2,
               this.y,
@@ -554,232 +533,404 @@
               this.height
             );
 
-            ctx.fillStyle = "rgba(100,100,200,0.7)";
+            ctx.shadowBlur = 5;
+            ctx.fillStyle = "rgba(100, 150, 220, 0.85)";
             ctx.fillRect(
-              this.x - this.width / 2 + 4,
+              this.x - this.width / 2 + 5,
               this.y + 8,
-              this.width - 8,
-              this.height * 0.3
+              this.width - 10,
+              this.height * 0.35
             );
 
-            ctx.fillStyle = "#333";
-            const wheelSize = this.width * 0.15;
+            ctx.shadowColor = "#ffeb3b";
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = "#ffeb3b";
             ctx.fillRect(
-              this.x - this.width / 2 - 4,
-              this.y + this.height * 0.25,
-              wheelSize,
-              this.height * 0.2
+              this.x - this.width / 2 + 5,
+              this.y + 3,
+              this.width * 0.35,
+              6
             );
             ctx.fillRect(
-              this.x + this.width / 2 - wheelSize + 4,
-              this.y + this.height * 0.25,
-              wheelSize,
-              this.height * 0.2
-            );
-            ctx.fillRect(
-              this.x - this.width / 2 - 4,
-              this.y + this.height * 0.7,
-              wheelSize,
-              this.height * 0.2
-            );
-            ctx.fillRect(
-              this.x + this.width / 2 - wheelSize + 4,
-              this.y + this.height * 0.7,
-              wheelSize,
-              this.height * 0.2
+              this.x + this.width / 2 - this.width * 0.35 - 5,
+              this.y + 3,
+              this.width * 0.35,
+              6
             );
 
-            ctx.fillStyle = "#ff0000";
+            ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = "#1a1a1a";
+            const wheelW = this.width * 0.22;
+            const wheelH = this.height * 0.2;
+
             ctx.fillRect(
-              this.x - this.width / 2 + 4,
-              this.y + this.height - 5,
+              this.x - this.width / 2 - 6,
+              this.y + this.height * 0.25,
+              wheelW,
+              wheelH
+            );
+            ctx.fillRect(
+              this.x + this.width / 2 - wheelW + 6,
+              this.y + this.height * 0.25,
+              wheelW,
+              wheelH
+            );
+            ctx.fillRect(
+              this.x - this.width / 2 - 6,
+              this.y + this.height * 0.7,
+              wheelW,
+              wheelH
+            );
+            ctx.fillRect(
+              this.x + this.width / 2 - wheelW + 6,
+              this.y + this.height * 0.7,
+              wheelW,
+              wheelH
+            );
+
+            ctx.fillStyle = "#555";
+            ctx.shadowBlur = 3;
+            const discSize = wheelW * 0.6;
+            ctx.fillRect(
+              this.x - this.width / 2 - 3,
+              this.y + this.height * 0.25 + wheelH / 2 - discSize / 2,
+              discSize,
+              discSize
+            );
+            ctx.fillRect(
+              this.x + this.width / 2 - discSize + 3,
+              this.y + this.height * 0.25 + wheelH / 2 - discSize / 2,
+              discSize,
+              discSize
+            );
+            ctx.fillRect(
+              this.x - this.width / 2 - 3,
+              this.y + this.height * 0.7 + wheelH / 2 - discSize / 2,
+              discSize,
+              discSize
+            );
+            ctx.fillRect(
+              this.x + this.width / 2 - discSize + 3,
+              this.y + this.height * 0.7 + wheelH / 2 - discSize / 2,
+              discSize,
+              discSize
+            );
+
+            ctx.fillStyle = "#e74c3c";
+            ctx.shadowColor = "#e74c3c";
+            ctx.shadowBlur = 10;
+            ctx.fillRect(
+              this.x - this.width / 2 + 5,
+              this.y + this.height - 6,
               this.width * 0.3,
               4
             );
             ctx.fillRect(
-              this.x + this.width / 2 - this.width * 0.3 - 4,
-              this.y + this.height - 5,
+              this.x + this.width / 2 - this.width * 0.3 - 5,
+              this.y + this.height - 6,
               this.width * 0.3,
               4
             );
           } else {
-            ctx.fillStyle = "#666";
+            ctx.fillStyle = this.color;
+            ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+            ctx.shadowBlur = 15;
             ctx.fillRect(
               this.x - this.width / 2,
               this.y,
               this.width,
-              this.height + 15
+              this.height * 0.4
             );
 
-            ctx.fillStyle = this.color;
+            ctx.fillStyle = "rgba(100, 150, 220, 0.8)";
             ctx.fillRect(
-              this.x - this.width / 2 + 4,
-              this.y + 25,
-              this.width - 8,
-              this.height - 15
+              this.x - this.width / 2 + 5,
+              this.y + 7,
+              this.width - 10,
+              this.height * 0.22
             );
 
-            ctx.fillStyle = "#333";
-            const wheelSize = this.width * 0.15;
+            const bodyGrad = ctx.createLinearGradient(
+              this.x - this.width / 2,
+              this.y,
+              this.x + this.width / 2,
+              this.y
+            );
+            bodyGrad.addColorStop(0, this.color);
+            bodyGrad.addColorStop(0.5, this.lightenColor(this.color, 20));
+            bodyGrad.addColorStop(1, this.color);
+            ctx.fillStyle = bodyGrad;
             ctx.fillRect(
-              this.x - this.width / 2 - 4,
+              this.x - this.width / 2,
+              this.y + this.height * 0.42,
+              this.width,
+              this.height * 0.65
+            );
+
+            ctx.fillStyle = "#1a1a1a";
+            ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+            ctx.shadowBlur = 8;
+            const truckWheelW = this.width * 0.24;
+            const truckWheelH = this.height * 0.18;
+
+            ctx.fillRect(
+              this.x - this.width / 2 - 7,
               this.y + this.height * 0.35,
-              wheelSize,
-              this.height * 0.18
+              truckWheelW,
+              truckWheelH
             );
             ctx.fillRect(
-              this.x + this.width / 2 - wheelSize + 4,
+              this.x + this.width / 2 - truckWheelW + 7,
               this.y + this.height * 0.35,
-              wheelSize,
-              this.height * 0.18
+              truckWheelW,
+              truckWheelH
             );
             ctx.fillRect(
-              this.x - this.width / 2 - 4,
-              this.y + this.height * 0.75,
-              wheelSize,
-              this.height * 0.18
+              this.x - this.width / 2 - 7,
+              this.y + this.height * 0.82,
+              truckWheelW,
+              truckWheelH
             );
             ctx.fillRect(
-              this.x + this.width / 2 - wheelSize + 4,
-              this.y + this.height * 0.75,
-              wheelSize,
-              this.height * 0.18
+              this.x + this.width / 2 - truckWheelW + 7,
+              this.y + this.height * 0.82,
+              truckWheelW,
+              truckWheelH
             );
           }
-
           ctx.restore();
         }
-      }
 
-      for (let i = 0; i < 5; i++) {
-        clouds.push(new Cloud());
+        lightenColor(color, percent) {
+          const num = parseInt(color.replace("#", ""), 16);
+          const amt = Math.round(2.55 * percent);
+          const R = Math.min(255, (num >> 16) + amt);
+          const G = Math.min(255, ((num >> 8) & 0x00ff) + amt);
+          const B = Math.min(255, (num & 0x0000ff) + amt);
+          return (
+            "#" +
+            (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)
+          );
+        }
       }
 
       for (let i = 0; i < canvas.height; i += 100) {
         roadLines.push(new RoadLine(i));
       }
 
+      function updatePlayerPosition() {
+        const laneWidth = canvas.width * 0.18;
+        const startX = canvas.width / 2 - laneWidth * 1.5;
+        player.targetX =
+          startX + player.lane * laneWidth + laneWidth / 2 - player.width / 2;
+        const diff = player.targetX - player.x;
+        player.x += diff * 0.2;
+        player.y = canvas.height - 180;
+      }
+
+      updatePlayerPosition();
+
       function drawPlayer() {
         ctx.save();
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.beginPath();
+        ctx.ellipse(
+          player.x + player.width / 2,
+          player.y + player.height + 10,
+          player.width * 0.8,
+          12,
+          0,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
 
-        // Mashina tanasi
-        ctx.fillStyle = "#ff0000";
-        ctx.shadowColor = "rgba(255, 0, 0, 0.5)";
-        ctx.shadowBlur = 15;
+        const gradient = ctx.createLinearGradient(
+          player.x,
+          player.y,
+          player.x + player.width,
+          player.y
+        );
+        gradient.addColorStop(0, "#b30000");
+        gradient.addColorStop(0.5, "#ff0000");
+        gradient.addColorStop(1, "#b30000");
+
+        ctx.fillStyle = gradient;
+        ctx.shadowColor = "rgba(255, 0, 0, 0.7)";
+        ctx.shadowBlur = 20;
         ctx.fillRect(player.x, player.y, player.width, player.height);
-        ctx.shadowBlur = 0;
 
-        // Oyna
-        ctx.fillStyle = "rgba(100,100,255,0.8)";
+        const highlightGrad = ctx.createLinearGradient(
+          player.x,
+          player.y,
+          player.x + player.width,
+          player.y
+        );
+        highlightGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
+        highlightGrad.addColorStop(0.3, "rgba(255, 255, 255, 0.5)");
+        highlightGrad.addColorStop(0.7, "rgba(255, 255, 255, 0.5)");
+        highlightGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = highlightGrad;
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+
+        ctx.fillStyle = "rgba(100, 150, 255, 0.9)";
+        ctx.shadowBlur = 8;
         ctx.fillRect(
-          player.x + 4,
-          player.y + 5,
-          player.width - 8,
+          player.x + 5,
+          player.y + 6,
+          player.width - 10,
           player.height * 0.35
         );
 
-        // Chiroqlar
         ctx.fillStyle = "#ffff00";
-        ctx.shadowColor = "rgba(255, 255, 0, 0.8)";
-        ctx.shadowBlur = 10;
-        ctx.fillRect(player.x + 4, player.y + 2, player.width * 0.35, 6);
+        ctx.shadowColor = "#ffff00";
+        ctx.shadowBlur = 20;
+        ctx.fillRect(player.x + 5, player.y + 2, player.width * 0.38, 7);
         ctx.fillRect(
-          player.x + player.width - player.width * 0.35 - 4,
+          player.x + player.width - player.width * 0.38 - 5,
           player.y + 2,
-          player.width * 0.35,
-          6
-        );
-        ctx.shadowBlur = 0;
-
-        // G'ildiraklar
-        ctx.fillStyle = "#222";
-        const wheelWidth = player.width * 0.18;
-        const wheelHeight = player.height * 0.2;
-        ctx.fillRect(
-          player.x - 4,
-          player.y + player.height * 0.25,
-          wheelWidth,
-          wheelHeight
-        );
-        ctx.fillRect(
-          player.x + player.width - wheelWidth + 4,
-          player.y + player.height * 0.25,
-          wheelWidth,
-          wheelHeight
-        );
-        ctx.fillRect(
-          player.x - 4,
-          player.y + player.height * 0.7,
-          wheelWidth,
-          wheelHeight
-        );
-        ctx.fillRect(
-          player.x + player.width - wheelHeight + 4,
-          player.y + player.height * 0.7,
-          wheelWidth,
-          wheelHeight
+          player.width * 0.38,
+          7
         );
 
-        // Orqa chiroqlar
+        ctx.fillStyle = "#1a1a1a";
+        ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
+        ctx.shadowBlur = 10;
+        const wheelW = player.width * 0.24;
+        const wheelH = player.height * 0.2;
+
+        ctx.fillRect(
+          player.x - 7,
+          player.y + player.height * 0.25,
+          wheelW,
+          wheelH
+        );
+        ctx.fillRect(
+          player.x + player.width - wheelW + 7,
+          player.y + player.height * 0.25,
+          wheelW,
+          wheelH
+        );
+        ctx.fillRect(
+          player.x - 7,
+          player.y + player.height * 0.68,
+          wheelW,
+          wheelH
+        );
+        ctx.fillRect(
+          player.x + player.width - wheelW + 7,
+          player.y + player.height * 0.68,
+          wheelW,
+          wheelH
+        );
+
+        ctx.fillStyle = "#666";
+        ctx.shadowBlur = 5;
+        const discSize = wheelW * 0.6;
+        ctx.fillRect(
+          player.x - 3,
+          player.y + player.height * 0.25 + wheelH / 2 - discSize / 2,
+          discSize,
+          discSize
+        );
+        ctx.fillRect(
+          player.x + player.width - discSize + 3,
+          player.y + player.height * 0.25 + wheelH / 2 - discSize / 2,
+          discSize,
+          discSize
+        );
+        ctx.fillRect(
+          player.x - 3,
+          player.y + player.height * 0.68 + wheelH / 2 - discSize / 2,
+          discSize,
+          discSize
+        );
+        ctx.fillRect(
+          player.x + player.width - discSize + 3,
+          player.y + player.height * 0.68 + wheelH / 2 - discSize / 2,
+          discSize,
+          discSize
+        );
+
         ctx.fillStyle = "#ff0000";
+        ctx.shadowColor = "#ff0000";
+        ctx.shadowBlur = 12;
         ctx.fillRect(
-          player.x + 4,
-          player.y + player.height - 6,
-          player.width * 0.3,
+          player.x + 5,
+          player.y + player.height - 5,
+          player.width * 0.32,
           4
         );
         ctx.fillRect(
-          player.x + player.width - player.width * 0.3 - 4,
-          player.y + player.height - 6,
-          player.width * 0.3,
+          player.x + player.width - player.width * 0.32 - 5,
+          player.y + player.height - 5,
+          player.width * 0.32,
           4
         );
 
-        // Boost alangasi
         if (boosting) {
-          ctx.fillStyle = "rgba(255,150,0,0.7)";
-          ctx.shadowColor = "rgba(255,100,0,0.8)";
-          ctx.shadowBlur = 20;
-          for (let i = 0; i < 4; i++) {
-            const flameHeight = 8 + Math.random() * 5;
-            ctx.fillRect(
-              player.x + player.width * 0.2,
-              player.y + player.height + i * 8,
-              player.width * 0.25,
-              flameHeight
-            );
-            ctx.fillRect(
-              player.x + player.width * 0.55,
-              player.y + player.height + i * 8,
-              player.width * 0.25,
-              flameHeight
-            );
-          }
-          ctx.shadowBlur = 0;
-        }
+          ctx.shadowBlur = 25;
+          ctx.shadowColor = "#ff8800";
 
+          for (let i = 0; i < 5; i++) {
+            const flameGrad = ctx.createRadialGradient(
+              player.x + player.width / 2,
+              player.y + player.height + i * 12,
+              0,
+              player.x + player.width / 2,
+              player.y + player.height + i * 12,
+              player.width * 0.7
+            );
+            flameGrad.addColorStop(0, `rgba(255, 200, 0, ${0.8 - i * 0.15})`);
+            flameGrad.addColorStop(0.5, `rgba(255, 100, 0, ${0.6 - i * 0.15})`);
+            flameGrad.addColorStop(1, "rgba(255, 0, 0, 0)");
+            ctx.fillStyle = flameGrad;
+            ctx.beginPath();
+            ctx.arc(
+              player.x + player.width / 2,
+              player.y + player.height + i * 12,
+              player.width * 0.6 * (1 - i * 0.15),
+              0,
+              Math.PI * 2
+            );
+            ctx.fill();
+          }
+        }
         ctx.restore();
       }
 
       function drawRoad() {
-        const roadWidth = Math.min(canvas.width * 0.6, 400);
-        const roadX = canvas.width / 2 - roadWidth / 2;
+        const roadGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        roadGrad.addColorStop(0, "#2a2a2a");
+        roadGrad.addColorStop(1, "#1a1a1a");
+        ctx.fillStyle = roadGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#555";
-        ctx.fillRect(roadX, 0, roadWidth, canvas.height);
+        const laneWidth = canvas.width * 0.18;
+        const startX = canvas.width / 2 - laneWidth * 1.5;
 
-        ctx.fillStyle = "#666";
-        ctx.fillRect(roadX + 15, 0, 25, canvas.height);
-        ctx.fillRect(roadX + roadWidth - 40, 0, 25, canvas.height);
+        ctx.fillStyle = "#333";
+        for (let i = 0; i <= 3; i++) {
+          const x = startX + i * laneWidth;
+          ctx.fillRect(x - 2, 0, 4, canvas.height);
+        }
 
-        ctx.fillStyle = "#2a2";
-        ctx.fillRect(0, 0, roadX, canvas.height);
-        ctx.fillRect(
-          roadX + roadWidth,
-          0,
-          canvas.width - (roadX + roadWidth),
-          canvas.height
-        );
+        roadLines.forEach((line) => {
+          line.update();
+          if (line.y > canvas.height) line.y = -50;
+          line.draw();
+        });
+
+        trees.forEach((tree, index) => {
+          tree.update();
+          tree.draw();
+          if (tree.y > canvas.height + 100) trees.splice(index, 1);
+        });
+
+        if (Math.random() < 0.02) {
+          trees.push(new Tree(Math.random() > 0.5 ? "left" : "right"));
+        }
       }
 
       function checkCollision(obj1, obj2) {
@@ -791,204 +942,209 @@
         );
       }
 
-      function updateGame() {
+      function gameLoop() {
         if (!gameRunning) return;
 
-        clouds.forEach((cloud) => {
-          cloud.update();
-        });
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawRoad();
 
-        roadLines.forEach((line, index) => {
-          line.update();
-          if (line.y > canvas.height) {
-            roadLines[index] = new RoadLine(-50);
-          }
-        });
+        frameCount++;
 
-        trees.forEach((tree, index) => {
-          tree.update();
-          if (tree.y > canvas.height) {
-            trees.splice(index, 1);
-          }
-        });
-
-        if (Math.random() < 0.02) {
-          trees.push(new Tree(Math.random() > 0.5 ? "left" : "right"));
+        if (frameCount % Math.max(60 - difficultyLevel * 5, 30) === 0) {
+          obstacles.push(new Obstacle());
         }
 
-        const roadWidth = Math.min(canvas.width * 0.6, 400);
-        const roadStart = canvas.width / 2 - roadWidth / 2;
-        const roadEnd = canvas.width / 2 + roadWidth / 2;
-
-        if (keys.left && player.x > roadStart + 10) {
-          player.x -= player.speed;
+        if (keys.left && player.lane > 0) {
+          player.lane = Math.max(0, player.lane - 0.15);
         }
-        if (keys.right && player.x < roadEnd - player.width - 10) {
-          player.x += player.speed;
+        if (keys.right && player.lane < 2) {
+          player.lane = Math.min(2, player.lane + 0.15);
         }
 
         if (keys.space && boost > 0) {
           boosting = true;
-          boost -= 1;
-          speed = baseSpeed * 2;
+          boost -= 1.5;
+          speed = baseSpeed * 1.8;
+
+          if (frameCount % 3 === 0) {
+            for (let i = 0; i < 3; i++) {
+              particles.push(
+                new Particle(
+                  player.x +
+                    player.width / 2 +
+                    (Math.random() - 0.5) * player.width,
+                  player.y + player.height,
+                  `hsl(${20 + Math.random() * 40}, 100%, 50%)`
+                )
+              );
+            }
+          }
         } else {
           boosting = false;
           speed = baseSpeed;
-          if (boost < 100) boost += 0.2;
+          boost = Math.min(100, boost + 0.3);
         }
 
-        if (Math.random() < 0.02) {
-          obstacles.push(new Obstacle());
-        }
+        updatePlayerPosition();
 
-        obstacles.forEach((obstacle, index) => {
-          obstacle.update();
+        obstacles.forEach((obs, index) => {
+          obs.update();
+          obs.draw();
 
-          if (checkCollision(player, obstacle)) {
-            gameRunning = false;
-            document.getElementById("gameOver").style.display = "block";
-            document.getElementById("finalScore").textContent = score;
-            if (score > highScore) {
-              highScore = score;
-            }
-            document.getElementById("highScore").textContent = highScore;
+          if (checkCollision(player, obs)) {
+            gameOver();
           }
 
-          if (obstacle.y > canvas.height) {
+          if (obs.y > canvas.height) {
             obstacles.splice(index, 1);
             score += 10;
-            baseSpeed += 0.02;
+
+            if (score % 100 === 0 && difficultyLevel < 10) {
+              difficultyLevel++;
+              baseSpeed += 0.5;
+            }
+
+            for (let i = 0; i < 10; i++) {
+              particles.push(
+                new Particle(player.x + player.width / 2, player.y, "#00ff88")
+              );
+            }
           }
         });
 
+        particles.forEach((p, index) => {
+          p.update();
+          p.draw();
+          if (p.life <= 0) particles.splice(index, 1);
+        });
+
+        drawPlayer();
+
         document.getElementById("scoreValue").textContent = score;
-        document.getElementById("speedValue").textContent = Math.floor(
-          speed * 20
+        document.getElementById("speedValue").textContent = Math.round(
+          speed * 15
         );
         document.getElementById("boostFill").style.width = boost + "%";
-      }
 
-      function drawGame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "linear-gradient(to bottom, #87CEEB, #4682B4)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        clouds.forEach((cloud) => cloud.draw());
-        drawRoad();
-        roadLines.forEach((line) => line.draw());
-        trees.forEach((tree) => tree.draw());
-        obstacles.forEach((obstacle) => obstacle.draw());
-        drawPlayer();
-      }
-
-      function gameLoop() {
-        updateGame();
-        drawGame();
         requestAnimationFrame(gameLoop);
       }
 
-      document.getElementById("startBtn").addEventListener("click", () => {
-        gameStarted = true;
+      function startGame() {
         gameRunning = true;
+        score = 0;
+        speed = 8;
+        baseSpeed = 8;
+        boost = 100;
+        boosting = false;
+        frameCount = 0;
+        difficultyLevel = 1;
+        player.lane = 1;
+        obstacles = [];
+        particles = [];
+        trees = [];
+
         document.getElementById("startScreen").style.display = "none";
-        score = 0;
-        speed = 5;
-        baseSpeed = 5;
-        boost = 100;
-        obstacles = [];
-        updatePlayerPosition();
-      });
-
-      document.getElementById("restartBtn").addEventListener("click", () => {
-        gameRunning = true;
         document.getElementById("gameOver").style.display = "none";
-        score = 0;
-        speed = 5;
-        baseSpeed = 5;
-        boost = 100;
-        obstacles = [];
-        updatePlayerPosition();
-      });
 
-      // Klaviatura boshqaruvi
+        gameLoop();
+      }
+
+      function gameOver() {
+        gameRunning = false;
+
+        if (score > highScore) {
+          highScore = score;
+        }
+
+        document.getElementById("finalScore").textContent = score;
+        document.getElementById("highScore").textContent = highScore;
+        document.getElementById("gameOver").style.display = "block";
+
+        for (let i = 0; i < 50; i++) {
+          particles.push(
+            new Particle(
+              player.x + player.width / 2,
+              player.y + player.height / 2,
+              `hsl(${Math.random() * 360}, 100%, 50%)`
+            )
+          );
+        }
+      }
+
       document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A")
+        if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
           keys.left = true;
-        if (e.key === "ArrowRight" || e.key === "d" || e.key === "D")
-          keys.right = true;
-        if (e.key === " ") {
           e.preventDefault();
+        }
+        if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+          keys.right = true;
+          e.preventDefault();
+        }
+        if (e.key === " ") {
           keys.space = true;
+          e.preventDefault();
         }
       });
 
       document.addEventListener("keyup", (e) => {
-        if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A")
+        if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
           keys.left = false;
-        if (e.key === "ArrowRight" || e.key === "d" || e.key === "D")
+        }
+        if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
           keys.right = false;
-        if (e.key === " ") keys.space = false;
+        }
+        if (e.key === " ") {
+          keys.space = false;
+        }
       });
 
-      // Mobil boshqaruv
-      document.getElementById("leftBtn").addEventListener("touchstart", (e) => {
+      const leftBtn = document.getElementById("leftBtn");
+      const rightBtn = document.getElementById("rightBtn");
+      const boostBtn = document.getElementById("boostBtn");
+
+      leftBtn.addEventListener("touchstart", (e) => {
         e.preventDefault();
         keys.left = true;
       });
-      document.getElementById("leftBtn").addEventListener("touchend", (e) => {
+      leftBtn.addEventListener("touchend", (e) => {
         e.preventDefault();
         keys.left = false;
       });
 
-      document
-        .getElementById("rightBtn")
-        .addEventListener("touchstart", (e) => {
-          e.preventDefault();
-          keys.right = true;
-        });
-      document.getElementById("rightBtn").addEventListener("touchend", (e) => {
+      rightBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        keys.right = true;
+      });
+      rightBtn.addEventListener("touchend", (e) => {
         e.preventDefault();
         keys.right = false;
       });
 
-      document
-        .getElementById("boostBtn")
-        .addEventListener("touchstart", (e) => {
-          e.preventDefault();
-          keys.space = true;
-        });
-      document.getElementById("boostBtn").addEventListener("touchend", (e) => {
+      boostBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        keys.space = true;
+      });
+      boostBtn.addEventListener("touchend", (e) => {
         e.preventDefault();
         keys.space = false;
       });
 
-      // Mouse boshqaruvi
-      document
-        .getElementById("leftBtn")
-        .addEventListener("mousedown", () => (keys.left = true));
-      document
-        .getElementById("leftBtn")
-        .addEventListener("mouseup", () => (keys.left = false));
-      document
-        .getElementById("rightBtn")
-        .addEventListener("mousedown", () => (keys.right = true));
-      document
-        .getElementById("rightBtn")
-        .addEventListener("mouseup", () => (keys.right = false));
-      document
-        .getElementById("boostBtn")
-        .addEventListener("mousedown", () => (keys.space = true));
-      document
-        .getElementById("boostBtn")
-        .addEventListener("mouseup", () => (keys.space = false));
+      leftBtn.addEventListener("mousedown", () => (keys.left = true));
+      leftBtn.addEventListener("mouseup", () => (keys.left = false));
+      leftBtn.addEventListener("mouseleave", () => (keys.left = false));
 
-      window.addEventListener("resize", () => {
-        resizeCanvas();
-        updatePlayerPosition();
-      });
+      rightBtn.addEventListener("mousedown", () => (keys.right = true));
+      rightBtn.addEventListener("mouseup", () => (keys.right = false));
+      rightBtn.addEventListener("mouseleave", () => (keys.right = false));
 
-      gameLoop();
+      boostBtn.addEventListener("mousedown", () => (keys.space = true));
+      boostBtn.addEventListener("mouseup", () => (keys.space = false));
+      boostBtn.addEventListener("mouseleave", () => (keys.space = false));
+
+      document.getElementById("startBtn").addEventListener("click", startGame);
+      document
+        .getElementById("restartBtn")
+        .addEventListener("click", startGame);
     </script>
   </body>
 </html>
