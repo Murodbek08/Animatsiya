@@ -4,7 +4,7 @@ import requests
 
 app = Flask(__name__)
 
-BOT_TOKEN = '8452173172:AAEEPUQuzOrMta1Pz1Nf1mvmSQr20CFhA3U'
+BOT_TOKEN = '8406251953:AAH_ip-sVtr89vyuHXVNc3UZb8fqvfTWotw'
 ADMIN_ID = 7962350864
 
 @app.route('/')
