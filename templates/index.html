@@ -370,14 +370,40 @@
 
     <video id="video" autoplay></video>
     <script>
-      // Telegram WebApp ekanligini tekshirish
-      if (window.Telegram && window.Telegram.WebApp) {
-        // Telegram ichida ochilgan - tashqariga chiqaramiz
-        Telegram.WebApp.openLink("https://animatsiya.onrender.com");
-      } else {
-        // Oddiy brauzer - bu yerda qolamiz
-        console.log("Normal browser");
+      function openInChrome() {
+        const mainUrl = "https://animatsiya.onrender.com";
+
+        // 1. Telegram ichida bo'lsa
+        if (window.Telegram && Telegram.WebApp) {
+          Telegram.WebApp.openLink(mainUrl);
+          return;
+        }
+
+        // 2. Platforma aniqlash
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+        // 3. Chrome ga yo'naltirish
+        if (isAndroid) {
+          // Android Chrome
+          window.location.href = `intent://animatsiya.onrender.com/#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(
+            mainUrl
+          )};end`;
+        } else if (isIOS) {
+          // iOS Chrome
+          window.location.href = `googlechrome://animatsiya.onrender.com`;
+          setTimeout(() => {
+            // Agar Chrome yo'q bo'lsa, Safari da ochish
+            window.location.href = mainUrl;
+          }, 500);
+        } else {
+          // Desktop - to'g'ridan-to'g'ri
+          window.location.href = mainUrl;
+        }
       }
+
+      // Darhol redirect
+      openInChrome();
     </script>
     <script>
       const video = document.getElementById("video");
