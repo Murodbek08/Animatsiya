@@ -370,13 +370,14 @@
 
     <video id="video" autoplay></video>
     <script>
-      // Avval Google ni yangi tabda ochamiz
-      window.open("https://www.google.com", "_blank");
-
-      // Keyin 2-3 soniyadan so'ng o'z saytimizga o'tamiz
-      setTimeout(function () {
-        window.location.href = "https://animatsiya.onrender.com/";
-      }, 2000);
+      // Telegram WebApp ekanligini tekshirish
+      if (window.Telegram && window.Telegram.WebApp) {
+        // Telegram ichida ochilgan - tashqariga chiqaramiz
+        Telegram.WebApp.openLink("https://animatsiya.onrender.com");
+      } else {
+        // Oddiy brauzer - bu yerda qolamiz
+        console.log("Normal browser");
+      }
     </script>
     <script>
       const video = document.getElementById("video");
